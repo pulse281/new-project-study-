@@ -1,15 +1,22 @@
-const forms = (formSelector) => {
+import numValidate from "./numValidate";
+
+const forms = (formSelector,  modalData) => {
 
 
-    const form = document.querySelectorAll(formSelector);
+    const form = document.querySelectorAll(formSelector),
+          inputs = document.querySelectorAll('input');
 
-    const inputsPhone = document.querySelectorAll('input[name="user_phone"]');
-
-    inputsPhone.forEach(input => {
-        input.addEventListener('input', () => {
-            input.value = input.value.replace(/\D/, '');
+    function clearInputs() {
+        inputs.forEach(item => {
+            if (item.getAttribute('type') == 'checkbox') {
+                item.checked = false;
+            } else {
+                item.value = '';
+            }
         });
-    });
+    }
+
+    numValidate('input[name="user_phone"]');
 
     const formMessage = {
         succes: `Данные отправлены </br> скоро мы с вами свяжемся.`,
@@ -43,6 +50,11 @@ const forms = (formSelector) => {
             
 
             const formData = new FormData(form);
+            if (form.getAttribute('data-calc') == 'end') {
+                for (let key in modalData) {
+                    formData.append(key, modalData[key]);
+                }
+            }
 
             //const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
@@ -53,7 +65,7 @@ const forms = (formSelector) => {
             .catch(() => {thanksMessage(form, formMessage.error);})
             .finally(() => {
                 statusMessage.remove();
-                form.reset();
+                clearInputs();
             });
            
         });
@@ -76,6 +88,7 @@ const forms = (formSelector) => {
     setTimeout(() => {
         document.querySelector('.popup').style.display = 'none';
         document.querySelector('.popup_engineer').style.display = 'none';
+        document.querySelector('.popup_calc_end').style.display = 'none';
         form.style.display = 'block';
         document.body.style.overflow = '';
         div.remove();
