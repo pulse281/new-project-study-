@@ -2,7 +2,23 @@ const imgScale = () => {
 
     const overlay = document.createElement('div'),
           bigImg = document.createElement('img'),
-          workArea = document.querySelector('.works');
+          workArea = document.querySelector('.works'),
+          scroll = calcScroll();
+
+    function calcScroll() {
+    let div = document.createElement('div');
+
+    div.style.width = '50px';
+    div.style.height = '50px';
+    div.style.overflowY = 'scroll';
+    div.style.visibility = 'hidden';
+
+    document.body.appendChild(div);
+    let scrollWidth = div.offsetWidth - div.clientWidth;
+    div.remove();
+
+    return scrollWidth;
+    }
 
     overlay.classList.add('popup');
     overlay.style.cssText = 'justify-content: center; align-items: center;'
@@ -19,12 +35,13 @@ const imgScale = () => {
             bigImg.setAttribute('src', path);
             overlay.style.display = 'flex';
             document.body.style.overflow = 'hidden';
+            document.body.style.marginRight = `${scroll}px`;
         }
 
         if (target && target.matches('div.popup')) {
             overlay.style.display = 'none';
             document.body.style.overflow = '';
-
+            document.body.style.marginRight = `0px`;
         }
 
     });
